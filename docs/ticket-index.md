@@ -1,5 +1,15 @@
 # Tickets
 
+## TERM-06 — Update download failure
+
+Status: ACTIVE. Approved: user reports `terminalCoach -update` failed and cannot
+copy the error. Scope: remove the updater's Git/SSH transport dependency with a
+direct HTTPS archive install; give explicit failure/retry guidance. Exact original
+failure is unknown; user confirmed copying refers to the update error text.
+Verify: installer URL, success/failure/missing-npm handling, Python and launcher
+tests, CLI help, live terminal integration. Real global installation and desktop
+review remain separate from mocked checks. Human acceptance is pending.
+
 ## TERM-05 — Everyday context, help, and lifecycle
 
 Status: ACTIVE. Approved: user requested useful non-Git everyday suggestions,

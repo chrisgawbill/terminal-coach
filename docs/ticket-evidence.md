@@ -1,5 +1,27 @@
 # Ticket evidence
 
+## TERM-06 — 2026-10-23
+
+Replaced npm's GitHub shorthand in the explicit updater with a direct HTTPS
+main-branch archive URL, removing Git/SSH transport requirements. Installer
+output remains visible; failures now add exit status and a retry command.
+README includes manual recovery for older installations and a command to save
+update output when terminal text cannot be copied. The original error was not
+available, so its exact cause is unconfirmed.
+
+Verification: all 25 Python tests, both Node launcher tests, CLI help, whitespace
+checks, and live PTY/tmux integration passed. The actual HTTPS archive downloaded
+successfully and its archive listing was checked. Installer success, nonzero
+exit, missing executable, and URL are unit-tested. Real global npm installation
+and graphical desktop review were initially not run. On the user's subsequent
+request, the HTTPS global install downloaded successfully but failed with EACCES
+under /usr/local, including outside the sandbox. Installation with an explicit
+~/.local prefix succeeded, replacing the existing launcher symlink; installed
+CLI help and npm's package listing passed. The default npm prefix remains
+/usr/local, so future updates still require writable global-install permissions
+or an explicit user prefix. Execution: single-agent; context: targeted.
+Human acceptance pending; ticket remains ACTIVE.
+
 ## TERM-01 — 2026-10-23
 
 Architecture review: Spotter AGENTS.md, README.md, ticket delivery contract, and

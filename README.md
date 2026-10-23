@@ -45,10 +45,16 @@ Coach sessions are running, use `--session terminal-coach-NAME` with restart or
 exit to select one (session names are shown by `tmux list-sessions`). Restart
 starts a fresh shell in the invoking directory or `--directory`; restart and
 exit close shells in that session, so finish work first. Update explicitly runs
-`npm install --global github:chrisgawbill/terminal-coach`; it needs network and
+`npm install --global https://github.com/chrisgawbill/terminal-coach/archive/refs/heads/main.tar.gz`;
+the HTTPS archive avoids requiring Git or GitHub SSH access. It needs network and
 global-install permissions and does not restart existing sessions. For pnpm
 managed installations, use `pnpm add --global github:chrisgawbill/terminal-coach`
 instead. Source checkouts are not modified by `-update`.
+
+If an older updater cannot download the update, run the HTTPS install command
+above directly. A failed update reports npm's exit status and a retry command;
+check npm's error for network or install-permission details. To save the error
+when copying terminal text is difficult, run `terminalCoach -update > ~/terminal-coach-update.log 2>&1`.
 
 Project commands are configured in `~/.config/terminal-coach/projects.json`.
 The default config is an empty sample. Add project entries with an absolute

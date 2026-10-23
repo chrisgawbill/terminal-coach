@@ -58,9 +58,23 @@ class CliTests(unittest.TestCase):
 
     def test_update_is_explicit_and_returns_installer_failure(self):
         with patch.object(cli.subprocess, "run", return_value=subprocess.CompletedProcess([], 7)) as run, \
-                patch("sys.argv", ["terminalCoach", "-update"]):
+                patch("sys.argv", ["terminalCoach", "-update"]), patch("sys.stderr") as output:
             self.assertEqual(cli.main(), 7)
-        self.assertEqual(run.call_args.args[0], ["npm", "install", "--global", "github:chrisgawbill/terminal-coach"])
+        self.assertEqual(run.call_args.args[0], ["npm", "install", "--global",
+                         "https://github.com/chrisgawbill/terminal-coach/archive/refs/heads/main.tar.gz"])
+        message = "".join(call.args[0] for call in output.write.call_args_list)
+        self.assertIn("npm exit 7", message)
+        self.assertIn("Retry directly: npm install --global https://", message)
+
+    def test_update_success_and_missing_npm(self):
+        with patch("sys.argv", ["terminalCoach", "--update"]), patch("sys.stdout") as output, \
+                patch.object(cli.subprocess, "run", return_value=subprocess.CompletedProcess([], 0)):
+            self.assertEqual(cli.main(), 0)
+        self.assertIn("updated", "".join(call.args[0] for call in output.write.call_args_list))
+        with patch("sys.argv", ["terminalCoach", "--update"]), patch("sys.stderr") as output, \
+                patch.object(cli.subprocess, "run", side_effect=FileNotFoundError("npm missing")):
+            self.assertEqual(cli.main(), 1)
+        self.assertIn("npm missing", "".join(call.args[0] for call in output.write.call_args_list))
 
     def test_restart_builds_replacement_before_closing_old_session(self):
         calls = []

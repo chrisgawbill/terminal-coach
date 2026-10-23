@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PREFIX = "terminal-coach-"
+UPDATE_URL = "https://github.com/chrisgawbill/terminal-coach/archive/refs/heads/main.tar.gz"
 
 
 def managed_session(parser, requested=None):
@@ -84,12 +85,19 @@ Updates require network access and npm global-install permissions.""")
     if args.session and not (args.restart or args.exit):
         parser.error("--session requires --restart or --exit")
     if args.update:
+        command = ["npm", "install", "--global", UPDATE_URL]
         try:
-            return subprocess.run(["npm", "install", "--global", "github:chrisgawbill/terminal-coach"],
-                                  check=False).returncode
+            result = subprocess.run(command, check=False)
         except OSError as exc:
             print(f"Could not update Terminal Coach: {exc}", file=sys.stderr)
             return 1
+        if result.returncode:
+            print(f"Terminal Coach update failed (npm exit {result.returncode}).\n"
+                  "Check npm's error above for network or global-install permission problems.\n"
+                  f"Retry directly: {shlex.join(command)}", file=sys.stderr)
+        else:
+            print("Terminal Coach updated. Start a new session to use the update.")
+        return result.returncode
     directory = args.directory.expanduser().resolve()
     if not directory.is_dir():
         parser.error(f"not a directory: {directory}")
