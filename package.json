@@ -2,7 +2,7 @@
   "name": "@chrisgawbill/terminal-coach",
   "version": "0.1.0",
   "description": "A contextual learning panel alongside a real terminal shell",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/chrisgawbill/terminal-coach.git"

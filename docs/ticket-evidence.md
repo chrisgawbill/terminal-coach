@@ -58,7 +58,8 @@ XDG/store directories. This is a failed verification, not a compatibility pass. 
 restriction. No registry publication was attempted.
 
 Git CLI could not resolve github.com. The connected GitHub integration confirmed
-an empty public chrisgawbill/terminal-coach repository with push access; delivery uses the connected GitHub API. The local origin is configured.
+a public chrisgawbill/terminal-coach repository with push access; final inspection found an initial MIT-license commit, which is preserved.
+The package includes that license. Delivery uses the connected GitHub API. The local origin is configured.
 The local feature branch retains its original commits; the remote receives the
 reviewed source snapshot because Git transport is unavailable. See the handoff
 for the verified remote commit. Registry release and live terminal acceptance
