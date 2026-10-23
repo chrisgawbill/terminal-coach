@@ -36,7 +36,7 @@ def main():
             raise RuntimeError("tmux did not report the shell pane")
         command = [sys.executable, "-m", "terminal_coach.panel", "--target", target]
         panel_cmd = f"PYTHONPATH={shlex.quote(str(ROOT))} {shlex.join(command)}"
-        subprocess.run(["tmux", "split-window", "-h", "-p", "40", "-t", target,
+        subprocess.run(["tmux", "split-window", "-h", "-l", "40%", "-t", target,
                         "-c", str(directory), panel_cmd], check=True)
         subprocess.run(["tmux", "select-pane", "-t", target], check=True)
         if os.environ.get("TMUX"):
