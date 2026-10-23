@@ -31,3 +31,14 @@ and startup failure reporting. Suggestions use local rules rather than a remote
 model; source files and command history are not used as context.
 Human acceptance: pending.
 Remote handoff: no remote configured for this new repository; no push performed.
+
+## TERM-02 — 2026-10-23
+
+Installed executable `bin/terminalCoach` with a symlink in `~/.local/bin`,
+which was already on PATH. The launcher resolves its checkout through the
+symlink, sets module lookup, preserves cwd, and forwards arguments unchanged.
+
+Verified `terminalCoach --help` from /tmp. A temporary interpreter stub verified
+cwd preservation, module lookup, and an argument containing spaces. All 11
+existing tests passed. Live tmux acceptance remains pending as in TERM-01.
+Execution: single-agent. Context: targeted. Expansion: none.

@@ -4,14 +4,20 @@ Terminal Coach opens a real interactive shell on the left and a read-only,
 contextual learning panel on the right. It uses Python's standard library and
 tmux; it does not install Python packages.
 
-From Terminal Coach's directory, run:
+From any directory, run:
 
 ```sh
-cd /home/chris_dev/projects/TerminalCoach
-python3 -m terminal_coach
+terminalCoach
 ```
 
-To start in another project, use `python3 -m terminal_coach --directory /path/to/project`.
+The shell starts in your current directory. To choose another project, use
+`terminalCoach --directory /path/to/project`. The launcher is linked from
+`~/.local/bin/terminalCoach`, which is already on your shell's PATH.
+To install the command again from this checkout, run:
+
+```sh
+ln -s /home/chris_dev/projects/TerminalCoach/bin/terminalCoach ~/.local/bin/terminalCoach
+```
 Use the panel's up/down arrows (or `j`/`k`) to select a suggestion, Enter to
 copy it into tmux's most recent buffer, and `q` to close the panel.
 With tmux's default prefix, use Ctrl-b plus Left/Right to switch panes and

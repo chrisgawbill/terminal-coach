@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+coach_root=$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")
+export PYTHONPATH="$coach_root${PYTHONPATH:+:$PYTHONPATH}"
+exec python3 -m terminal_coach "$@"

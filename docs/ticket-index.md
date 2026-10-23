@@ -24,3 +24,12 @@ Verify:
 - Human reviews the terminal and learning explanations before DONE.
 
 Pending: human acceptance of the running terminal experience.
+
+## TERM-02 — Launch from any directory
+
+Status: ACTIVE. Approved: user requested `terminalCoach` from anywhere.
+Scope: executable repository launcher linked onto the existing user PATH,
+preserving cwd and forwarding CLI arguments. No shell configuration changes.
+Verify: command resolves from another directory, `--help` works, cwd and
+arguments reach the entry point unchanged, existing tests pass.
+Pending: human acceptance of launch in an interactive terminal.
