@@ -48,7 +48,53 @@ def suggest(snapshot: Snapshot, now=None):
     if snapshot.git_root:
         result.append(Suggestion("git diff --stat", "Git is available for this repository.",
                                  "Summarizes tracked working-tree changes without displaying file contents."))
+    if not snapshot.git_root:
+        result.extend(outside_repository(snapshot))
     if not result:
         result.append(Suggestion("pwd", "No repository-specific context is available.",
                                  "Prints the current directory; configure a project to get tailored checks."))
+    return result
+
+
+def outside_repository(snapshot: Snapshot):
+    if not snapshot.cwd_exists:
+        return [Suggestion("cd ..", "The shell's current directory no longer exists.",
+                           "Moves to the parent directory; commands run in a deleted directory fail or behave oddly.")]
+    result = [
+        Suggestion("ls -lah", "This directory is not a Git repository.",
+                   "Lists entries, including hidden ones (-a), with permissions, owner, and human-readable sizes (-h)."),
+        Suggestion("pwd", "The shell is working in this directory.",
+                   "Prints its absolute path, useful before copying paths or running commands."),
+    ]
+    tools = snapshot.available_tools
+    if "du" in tools and "sort" in tools:
+        result.append(Suggestion("du -h --max-depth=1 . | sort -h", "Disk use can be checked for this directory.",
+                                 "Totals immediate subdirectory sizes, largest last; scanning large trees can take time."))
+    if "df" in tools:
+        result.append(Suggestion("df -h .", "This directory belongs to a filesystem.",
+                                 "Shows that filesystem's used and available space in human-readable units."))
+    if "find" in tools:
+        result.append(Suggestion("find . -maxdepth 1 -type f -mtime -1", "find is available for this directory.",
+                                 "Lists regular files modified in the last 24 hours at this level; does not open them."))
+    if snapshot.location == "temporary":
+        result.append(Suggestion("cd ~", "This path is in temporary storage.",
+                                 "Returns home; temporary files may be removed by system cleanup, so keep lasting work elsewhere."))
+    elif snapshot.location == "system" or not snapshot.cwd_writable:
+        result.append(Suggestion("ls -ld .", "This is a system path or directory access reports it is not writable.",
+                                 "Shows this directory's owner and permissions without changing them; use a personal folder for new work."))
+    else:
+        result.append(Suggestion("mkdir -p ./workspace", "This directory reports writable access.",
+                                 "Creates a workspace subdirectory if absent; keeps existing contents. Use cd workspace to enter it."))
+    if "ps" in tools:
+        result.append(Suggestion("ps -u \"$USER\" -o pid,etime,comm", "ps is installed for checking your processes.",
+                                 "Lists your processes with PID, elapsed time, and command name; does not stop them."))
+    if "ss" in tools:
+        result.append(Suggestion("ss -ltn", "ss is installed for inspecting network listeners.",
+                                 "Lists listening TCP ports numerically; useful when checking a local service."))
+    if not snapshot.at_home and snapshot.location != "temporary":
+        result.append(Suggestion("cd ~", "The shell is outside your home directory.",
+                                 "Returns to your home directory; `cd -` instead jumps back to the previous directory."))
+    if snapshot.docker_available:
+        result.append(Suggestion("docker ps", "Docker is installed on this machine.",
+                                 "Lists running containers with their names, images, and ports; add -a to include stopped ones."))
     return result

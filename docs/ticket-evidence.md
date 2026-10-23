@@ -64,3 +64,40 @@ The local feature branch retains its original commits; the remote receives the
 reviewed source snapshot because Git transport is unavailable. See the handoff
 for the verified remote commit. Registry release and live terminal acceptance
 remain pending.
+
+## TERM-04 — 2026-10-23
+
+Outside a Git repository, rules now suggest `ls -lah`, a bounded repository
+search, `du`/`df` disk checks, `cd ~` when away from home, and `docker ps` when
+Docker is on PATH; a deleted cwd yields only `cd ..`. Context adds cwd existence,
+home match, and Docker availability without listing directories.
+
+Verification: 15 Python tests and the npm launcher tests passed, including new
+rule cases (home, non-home, deleted cwd, Docker present/absent) and a context
+test. A live rule smoke check from /tmp produced the expected list. Live tmux
+panel review was not run. Human acceptance: pending.
+Execution: single-agent. Context: targeted. Expansion: none.
+
+## TERM-05 — 2026-10-23
+
+Implemented everyday non-Git suggestions using cwd existence/access, home,
+temporary/system path categories, and installed tools. No directory contents,
+history, credentials, or terminal output are collected as suggestion context.
+Added scrollable panel help, expanded CLI help including `-help`, separate
+supported desktop terminal startup with inline server fallback, and explicit
+restart/exit/update actions. Lifecycle targeting refuses ambiguous sessions and
+uses exact session names. Update runs an explicit global npm GitHub install.
+
+Verification: all 24 Python unit tests passed; both Node launcher tests passed
+outside the sandbox (sandbox subprocess handling caused an initial failure).
+CLI `node bin/terminalCoach -help` and whitespace checks passed. Saved live PTY
+check `python3 tests/terminal_integration.py` passed outside the sandbox: isolated
+split launch, non-Git panel, help, literal buffer copy, replacement restart, and
+session exit. No suggested command was executed. Temporary sessions were closed.
+Desktop window launch was mocked, not visually exercised: no graphical desktop
+was available. Actual package update was not run; installer arguments/status
+handling were tested without changing the installed package.
+
+Execution: coordinator plus bounded context/help implementation worker.
+Context scope: targeted runtime/tests and project guidance. Human acceptance:
+pending; TERM-05 remains ACTIVE.

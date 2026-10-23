@@ -51,6 +51,23 @@ class PanelTests(unittest.TestCase):
             if height >= 16:
                 self.assertEqual(screen.rows[0], "TERMINAL COACH")
 
+    def test_help_scrolls_and_enter_never_copies(self):
+        snapshot = SimpleNamespace(cwd="/tmp", git_root=None, container=None,
+                                   config_error=None, errors=())
+        calls = []
+        screen = FakeScreen(8, 28, [ord("?"), 10, panel.curses.KEY_END, ord("q"), ord("q")])
+        def run(args):
+            calls.append(args)
+            return subprocess.CompletedProcess(args, 0, "/tmp", "")
+        with patch.object(panel.curses, "curs_set"), patch.object(panel, "tmux", side_effect=run), \
+                patch.object(panel, "collect", return_value=snapshot), patch.object(panel, "suggest", return_value=[]):
+            panel.draw(screen, "%1")
+        self.assertFalse(any(call[0] == "set-buffer" for call in calls))
+        text = " ".join(panel.HELP)
+        for expected in ("-restart", "-update", "-exit", "credentials", "Page Down", "nothing runs automatically"):
+            self.assertIn(expected, text)
+        self.assertTrue(all(len(line) <= 27 for line in panel.help_lines(27)))
+
     def test_enter_copies_literal_to_latest_buffer_without_shell_input(self):
         snapshot = SimpleNamespace(cwd="/project", project=None, git_root=None, branch=None,
                                    dirty=None, head=None, has_commits=None, container=None,

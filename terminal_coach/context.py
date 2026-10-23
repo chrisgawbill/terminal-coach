@@ -3,6 +3,7 @@
 import json
 import os
 import shlex
+import shutil
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -29,6 +30,12 @@ class Snapshot:
     errors: tuple[str, ...] = ()
     config_error: str | None = None
     has_commits: bool | None = None
+    cwd_exists: bool = True
+    at_home: bool = False
+    docker_available: bool = False
+    cwd_writable: bool = False
+    location: str = "other"
+    available_tools: tuple[str, ...] = ()
 
 
 def _run(args, cwd=None):
@@ -81,7 +88,8 @@ def collect(cwd, config_path=CONFIG):
     errors = []
     git_root, error = _run(["git", "-C", cwd, "rev-parse", "--show-toplevel"])
     if error:
-        errors.append(f"Git: {error}")
+        if "not a git repository" not in error.lower():
+            errors.append(f"Git: {error}")
         git_root = None
     project, config_error = configured_project(git_root, config_path)
 
@@ -122,8 +130,22 @@ def collect(cwd, config_path=CONFIG):
             errors.append(f"Docker ({container}): {error}")
         else:
             state = output
+    path = Path(cwd).resolve()
+    home = Path.home().resolve()
+    if path == home or home in path.parents:
+        location = "home"
+    elif any(path == root or root in path.parents for root in (Path("/tmp"), Path("/var/tmp"))):
+        location = "temporary"
+    elif any(path == root or root in path.parents for root in (Path("/etc"), Path("/usr"), Path("/var"), Path("/sys"), Path("/proc"), Path("/boot"))):
+        location = "system"
+    else:
+        location = "other"
     return Snapshot(cwd, project, git_root, branch, dirty, head, committed_at, container, state,
-                    tuple(errors), config_error, has_commits)
+                    tuple(errors), config_error, has_commits, Path(cwd).is_dir(),
+                    path == home, shutil.which("docker") is not None,
+                    os.access(cwd, os.W_OK | os.X_OK), location,
+                    tuple(tool for tool in ("find", "du", "sort", "df", "ps", "ss")
+                          if shutil.which(tool)))
 
 
 def project_command(project, command):

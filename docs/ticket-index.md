@@ -1,5 +1,17 @@
 # Tickets
 
+## TERM-05 — Everyday context, help, and lifecycle
+
+Status: ACTIVE. Approved: user requested useful non-Git everyday suggestions,
+expanded help, a separate startup window, and restart/update/exit flags.
+Scope: metadata-only everyday context; CLI and panel help; launch a separate
+terminal window where a graphical terminal is available, with a terminal-only
+fallback; `-restart`, `-update`, `-exit` and double-dash aliases. Updates are
+explicit user actions and suggested shell commands are never executed.
+Verify: context/rule and help coverage; lifecycle/window command checks;
+Python suite and launcher tests; CLI help smoke; live tmux integration when
+available. Human acceptance of desktop behavior and suggestions is pending.
+
 States: IDEA, READY, ACTIVE, BLOCKED, DONE. Only human-authorized scope starts.
 
 ## TERM-01 — Contextual terminal learning panel
@@ -44,3 +56,14 @@ must remain usable without shipping this server's absolute paths in the package.
 Verify: package archive contents, isolated install and CLI smoke checks,
 Python suite, CLI argument/cwd preservation, GitHub branch content verification.
 Pending: registry publication/account availability and human terminal acceptance.
+
+## TERM-04 — Useful outside a project
+
+Status: ACTIVE. Approved: user requested the panel be useful when not in a
+project. Scope: outside a Git repository, suggest general, explained navigation
+and disk commands instead of only `pwd`; note a deleted cwd, home vs. elsewhere,
+and whether Docker is installed. Context uses path metadata and PATH lookup only;
+no directory listing, file contents, or project commands in core rules.
+Verify: pure rules for home, non-home, deleted cwd, and Docker present/absent;
+context reports home, missing cwd, and Docker availability; existing tests pass.
+Pending: human acceptance of the suggestions in a live terminal.

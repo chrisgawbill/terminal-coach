@@ -12,7 +12,8 @@ terminal multiplexer. No server, browser, API key, database, or model service.
   Docker container state. Subprocesses use argument lists and timeouts.
 - `suggestions.py`: pure rules returning commands, reasons, and explanations.
 - `panel.py`: curses rendering and keyboard selection; composed with context.
-- `__main__.py`: launch/attach lifecycle and CLI.
+- `__main__.py`: separate desktop window launch (terminal fallback), tmux
+  launch/attach lifecycle, explicit restart/exit, and npm update CLI.
 - `config/projects.json`: project paths and known commands. No Spotter or Hockey
   project names in core modules. Match Git root, not folder basename.
 
@@ -27,7 +28,10 @@ is shown as unavailable, never interpreted as healthy or clean.
 ## Scope
 
 Rules cover a recent commit, dirty worktree, failed/missing probes, configured
-container status, Git review and project checks. Suggestions explain flags and
+container status, Git review and project checks. Outside a repository, rules
+use only path metadata (cwd exists, cwd is home) and whether `docker` is on PATH
+plus writable access and home/temporary/system path categories to offer everyday
+commands; directories are never listed for context. Suggestions explain flags and
 side effects. No free-form inference or remote telemetry in the first version.
 
 ## Distribution

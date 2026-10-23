@@ -50,6 +50,20 @@ class ContextTests(unittest.TestCase):
             self.assertFalse(snapshot.has_commits)
             self.assertFalse(snapshot.dirty)
 
+    def test_outside_repository_reports_directory_metadata(self):
+        with tempfile.TemporaryDirectory() as temp:
+            config = Path(temp) / "missing-config.json"
+            snapshot = collect(temp, config)
+            self.assertIsNone(snapshot.git_root)
+            self.assertTrue(snapshot.cwd_exists)
+            self.assertTrue(snapshot.cwd_writable)
+            self.assertEqual(snapshot.location, "temporary")
+            self.assertIsInstance(snapshot.available_tools, tuple)
+            self.assertFalse(snapshot.at_home)
+            self.assertIsInstance(snapshot.docker_available, bool)
+            self.assertFalse(collect(str(Path(temp) / "gone"), config).cwd_exists)
+        self.assertTrue(collect(str(Path.home()), config).at_home)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,6 +9,28 @@ from .context import collect
 from .suggestions import suggest
 
 
+HELP = (
+    "SUGGESTIONS",
+    "Up/Down or j/k selects a command. Enter copies literal text to the latest tmux buffer; nothing runs automatically.",
+    "Ctrl-b Left/Right switches panes. In the shell, Ctrl-b then ] pastes; review the command and press Enter yourself.",
+    "r refreshes context. ? or h opens help. q or Escape closes help; q in the main panel closes the panel.",
+    "CONTEXT AND PRIVACY",
+    "Suggestions follow the shell's current directory, including outside Git repositories. Directory existence, access, path category, and tools on PATH guide everyday tasks.",
+    "Git branch, status, HEAD, and commit time plus configured Docker state guide project tasks. Failed probes do not imply a healthy state.",
+    "Context collection does not list directories or read file contents, shell history, credentials, or terminal output. Project commands come from your explicit projects.json configuration.",
+    "SESSION AND LIFECYCLE",
+    "Run terminalCoach -restart from a shell to restart Coach; -exit closes its session and shells. Save work before either action.",
+    "terminalCoach -update explicitly updates the global npm package from GitHub. terminalCoach --help describes startup and lifecycle options.",
+    "Startup opens a separate terminal window when supported; terminal-only environments use the current terminal. Ctrl-b then d detaches; terminalCoach opens a new session. Lifecycle flags target the current or only session; use --session to choose among several.",
+    "HELP NAVIGATION",
+    "Up/Down or j/k scrolls; Page Up/Page Down moves a page; Home/End jumps. ?/h, q, or Escape returns to suggestions.",
+)
+
+
+def help_lines(width):
+    return [line for paragraph in HELP for line in (*textwrap.wrap(paragraph, max(1, width)), "")]
+
+
 def tmux(args):
     import subprocess
 
@@ -22,7 +44,9 @@ def draw(stdscr, target):
     curses.curs_set(0)
     stdscr.timeout(250)
     selected = 0
-    message = "↑/↓ move · Enter copy · q close"
+    helping = False
+    help_offset = 0
+    message = "↑/↓ move · Enter copy · ? help · q close"
     snapshot = None
     items = []
     refresh_at = 0
@@ -41,7 +65,15 @@ def draw(stdscr, target):
                 refresh_at = now + 3
         stdscr.erase()
         height, width = stdscr.getmaxyx()
-        if height < 8 or width < 28:
+        if helping and height >= 4 and width >= 4:
+            lines = help_lines(width - 1)
+            page = height - 2
+            help_offset = min(help_offset, max(0, len(lines) - page))
+            stdscr.addnstr(0, 0, "HELP · Terminal Coach", width - 1, curses.A_BOLD)
+            for offset, line in enumerate(lines[help_offset:help_offset + page]):
+                stdscr.addnstr(offset + 1, 0, line, width - 1)
+            stdscr.addnstr(height - 1, 0, "↑/↓ scroll · ?/q back", width - 1)
+        elif height < 8 or width < 28:
             lines = ["Terminal Coach", "Panel needs 28x8.", "Resize terminal or press q."]
             for y, line in enumerate(lines[:height]):
                 stdscr.addnstr(y, 0, line, max(0, width - 1))
@@ -90,6 +122,26 @@ def draw(stdscr, target):
             stdscr.addnstr(height - 1, 0, "Ctrl-b ] paste · r refresh", width - 1)
         stdscr.refresh()
         key = stdscr.getch()
+        if key in (ord("?"), ord("h")):
+            helping = not helping
+            help_offset = 0
+            continue
+        if helping:
+            if key in (ord("q"), 27):
+                helping = False
+            elif key in (curses.KEY_DOWN, ord("j")):
+                help_offset += 1
+            elif key in (curses.KEY_UP, ord("k")):
+                help_offset = max(0, help_offset - 1)
+            elif key == curses.KEY_NPAGE:
+                help_offset += max(1, height - 2)
+            elif key == curses.KEY_PPAGE:
+                help_offset = max(0, help_offset - max(1, height - 2))
+            elif key == curses.KEY_HOME:
+                help_offset = 0
+            elif key == curses.KEY_END:
+                help_offset = len(help_lines(width - 1))
+            continue
         if key in (ord("q"), 27):
             return
         if key in (ord("r"), curses.KEY_RESIZE):
