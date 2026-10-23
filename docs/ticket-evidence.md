@@ -42,3 +42,24 @@ Verified `terminalCoach --help` from /tmp. A temporary interpreter stub verified
 cwd preservation, module lookup, and an argument containing spaces. All 11
 existing tests passed. Live tmux acceptance remains pending as in TERM-01.
 Execution: single-agent. Context: targeted. Expansion: none.
+
+## TERM-03 — 2026-10-23
+
+Created npm package `@chrisgawbill/terminal-coach@0.1.0`; npm and pnpm share the
+same archive. The Node launcher preserves cwd and arguments and reports a missing
+Python interpreter. Package contents exclude tests, personal project paths, and
+Python bytecode. Existing project commands were moved to user configuration.
+
+Verification: `npm test` passed 2 launcher tests and 11 Python tests. Package
+archive inspection and isolated offline npm installation passed; installed
+`terminalCoach --help` runs from /tmp. pnpm 12.14 installation could not be verified: its store operation lock
+failed with a read-only-filesystem error, including with isolated writable
+XDG/store directories. This is a failed verification, not a compatibility pass. Live tmux remains unverified due the previously recorded socket
+restriction. No registry publication was attempted.
+
+Git CLI could not resolve github.com. The connected GitHub integration confirmed
+an empty public chrisgawbill/terminal-coach repository with push access; delivery uses the connected GitHub API. The local origin is configured.
+The local feature branch retains its original commits; the remote receives the
+reviewed source snapshot because Git transport is unavailable. See the handoff
+for the verified remote commit. Registry release and live terminal acceptance
+remain pending.

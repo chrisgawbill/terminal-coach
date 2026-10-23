@@ -1,15 +1,3 @@
 {
-  "projects": [
-    {
-      "path": "/home/chris_dev/projects/Spotter",
-      "container": "spotter-dashboard",
-      "checks": ["npm test"],
-      "restart": "docker restart spotter-dashboard",
-      "logs": "docker logs --tail 50 spotter-dashboard"
-    },
-    {
-      "path": "/home/chris_dev/projects/HockeyStatsWebApp",
-      "checks": ["cd react && pnpm test"]
-    }
-  ]
+  "projects": []
 }

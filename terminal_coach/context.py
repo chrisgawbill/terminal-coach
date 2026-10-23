@@ -1,6 +1,7 @@
 """Read-only collection of shell, Git, and configured container metadata."""
 
 import json
+import os
 import shlex
 import subprocess
 from dataclasses import dataclass
@@ -8,7 +9,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CONFIG = ROOT / "config" / "projects.json"
+USER_CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "terminal-coach" / "projects.json"
+CONFIG = Path(os.environ["TERMINAL_COACH_CONFIG"]) if os.environ.get("TERMINAL_COACH_CONFIG") else (
+    USER_CONFIG if USER_CONFIG.exists() else ROOT / "config" / "projects.json"
+)
 
 
 @dataclass(frozen=True)

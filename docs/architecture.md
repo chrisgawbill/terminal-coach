@@ -29,3 +29,12 @@ is shown as unavailable, never interpreted as healthy or clean.
 Rules cover a recent commit, dirty worktree, failed/missing probes, configured
 container status, Git review and project checks. Suggestions explain flags and
 side effects. No free-form inference or remote telemetry in the first version.
+
+## Distribution
+
+One npm package serves npm and pnpm. Its Node executable locates the bundled
+Python modules without changing the caller's cwd, forwards CLI arguments, and
+inherits terminal input/output. Python and tmux remain external prerequisites.
+The archive contains only the runtime, generic configuration, and README.
+Personal project commands live in the user's configuration directory, with an
+explicit environment override available. Installing the package runs no hooks.

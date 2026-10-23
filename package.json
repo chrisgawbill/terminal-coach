@@ -1,0 +1,26 @@
+{
+  "name": "@chrisgawbill/terminal-coach",
+  "version": "0.1.0",
+  "description": "A contextual learning panel alongside a real terminal shell",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrisgawbill/terminal-coach.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "terminalCoach": "bin/terminalCoach",
+    "terminal-coach": "bin/terminalCoach"
+  },
+  "files": [
+    "bin/terminalCoach",
+    "terminal_coach/**/*.py",
+    "config/projects.json",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/launcher.test.js && python3 -m unittest discover -s tests -v"
+  }
+}

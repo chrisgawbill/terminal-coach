@@ -33,3 +33,14 @@ preserving cwd and forwarding CLI arguments. No shell configuration changes.
 Verify: command resolves from another directory, `--help` works, cwd and
 arguments reach the entry point unchanged, existing tests pass.
 Pending: human acceptance of launch in an interactive terminal.
+
+## TERM-03 — npm distribution and GitHub delivery
+
+Status: ACTIVE. Approved: user requested push to chrisgawbill/terminal-coach and
+npm/pnpm packaging. Scope: one package usable by both managers, portable CLI,
+package installation verification, documentation, and GitHub delivery. Keep the
+native Python/tmux runtime; document prerequisites. Local project configuration
+must remain usable without shipping this server's absolute paths in the package.
+Verify: package archive contents, isolated install and CLI smoke checks,
+Python suite, CLI argument/cwd preservation, GitHub branch content verification.
+Pending: registry publication/account availability and human terminal acceptance.
