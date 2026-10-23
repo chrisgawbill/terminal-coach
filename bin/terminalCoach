@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+'use strict';
+
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+
+const root = path.resolve(__dirname, '..');
+const pythonPath = [root, process.env.PYTHONPATH].filter(Boolean).join(path.delimiter);
+const result = spawnSync('python3', ['-m', 'terminal_coach', ...process.argv.slice(2)], {
+  cwd: process.cwd(),
+  env: { ...process.env, PYTHONPATH: pythonPath },
+  stdio: 'inherit',
+});
+
+if (result.error) {
+  if (result.error.code === 'ENOENT') {
+    process.stderr.write('Terminal Coach requires Python 3.10 or newer (python3 was not found).\n');
+  } else {
+    process.stderr.write(`Could not start Python: ${result.error.message}\n`);
+  }
+  process.exit(1);
+}
+
+process.exit(result.status ?? 1);
